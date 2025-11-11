@@ -36,81 +36,67 @@ struct sistemaEmpt {
     bool status;
 };
 
-// FUNÇÃO PARA BACKUP
-
-void backupArquivo(const char *origem, const char *destino) {
-    FILE *fOrig = fopen(origem, "r");
-    if (!fOrig) return; // se não existir, nada a fazer
-
-    FILE *fDest = fopen(destino, "w");
-    if (!fDest) { fclose(fOrig); return; }
-
-    char linha[512];
-    while (fgets(linha, sizeof(linha), fOrig)) {
-        fputs(linha, fDest);
-    }
-
-    fclose(fOrig);
-    fclose(fDest);
-}
-
 // FUNÇÕES PARA ARQUIVOS
-
-void salvarLivros(struct cad_liv *livros, int qtd) {
-    FILE *f = fopen("livros.txt", "a");
-    if (!f) return;
+void salvarLivros(struct cad_liv *livros, int qtd)
+{
+    FILE *fs = fopen("livros.txt", "a");
+    if (!fs) return;
     for (int i = 0; i < qtd; i++)
-        fprintf(f, "%d|%s|%s|%s|%d|%d|%d\n",
+        fprintf(fs, "%d|%s|%s|%s|%d|%d|%d\n",
                 livros[i].cod_livro, livros[i].titulo, livros[i].autor, livros[i].editora,
                 livros[i].ano_pub, livros[i].exempl_disp, livros[i].status);
-    fclose(f);
+    qtd++;
+    fclose(fs);
 }
-
-int carregarLivros(struct cad_liv *livros) {
-    FILE *f = fopen("livros.txt", "r");
-    if (!f) return 0;
+int carregarLivros(struct cad_liv *livros)
+{
+    FILE *fs = fopen("livros.txt", "r");
+    if (!fs) return 0;
     int i = 0;
-    while (fscanf(f, "%d%99[^|]|%99[^|]|%99[^|]|%d|%d|%d\n",
+    while (fscanf(fs, "%d|%99[^|]|%99[^|]|%99[^|]|%d|%d|%d\n",
                   &livros[i].cod_livro, livros[i].titulo, livros[i].autor, livros[i].editora,
-                  &livros[i].ano_pub, &livros[i].exempl_disp, &livros[i].status) == 7) {
+                  &livros[i].ano_pub, &livros[i].exempl_disp, &livros[i].status) == 7)
+    {
         i++;
     }
-    fclose(f);
+    fclose(fs);
     return i;
 }
-
-void salvarUsuarios(struct cad_Users *usuarios, int qtd) {
-    FILE *f = fopen("usuarios.txt", "a");
-    if (!f) return;
+// FUNÇÕES PARA SALVAR E CARREGAR USUÁRIOS
+void salvarUsuarios(struct cad_Users *usuarios, int qtd)
+{
+    FILE *fs = fopen("usuarios.txt", "w");
+    if (!fs) return;
     for (int i = 0; i < qtd; i++)
-        fprintf(f, "%d|%s|%s|%s\n",
+        fprintf(fs, "%d|%s|%s|%s\n",
                 usuarios[i].matricula, usuarios[i].nome_completo, usuarios[i].curso, usuarios[i].telefone);
-    fclose(f);
+    qtd++;
+    fclose(fs);
 }
-
 int carregarUsuarios(struct cad_Users *usuarios) {
-    FILE *f = fopen("usuarios.txt", "r");
-    if (!f) return 0;
+    FILE *fs = fopen("usuarios.txt", "r");
+    if (!fs) return 0;
     int i = 0;
-    while (fscanf(f, "%d|%99[^|]|%49[^|]|%14[^\n]\n",
-                  &usuarios[i].matricula, usuarios[i].nome_completo, usuarios[i].curso, usuarios[i].telefone) == 4) {
+    while (fscanf(fs, "%d|%99[^|]|%49[^|]|%14[^\n]\n",
+                  &usuarios[i].matricula, usuarios[i].nome_completo, usuarios[i].curso, usuarios[i].telefone) == 4)
+    {
         i++;
     }
-    fclose(f);
+    fclose(fs);
     return i;
 }
 
 void salvarEmprestimos(struct sistemaEmpt *emprestimos, int qtd) {
-    FILE *f = fopen("emprestimos.txt", "a");
+    FILE *f = fopen("emprestimos.txt", "w");
     if (!f) return;
     for (int i = 0; i < qtd; i++)
         fprintf(f, "%d|%d|%d|%s|%s|%s|%d\n",
                 emprestimos[i].cod_emprestimo, emprestimos[i].matricula_usuario, emprestimos[i].cod_livro,
                 emprestimos[i].data_emprestimo, emprestimos[i].data_devolucao_prev,
                 emprestimos[i].data_devolucao_real, emprestimos[i].status);
+    qtd++;
     fclose(f);
 }
-
 int carregarEmprestimos(struct sistemaEmpt *emprestimos) {
     FILE *f = fopen("emprestimos.txt", "r");
     if (!f) return 0;
@@ -125,9 +111,7 @@ int carregarEmprestimos(struct sistemaEmpt *emprestimos) {
     fclose(f);
     return i;
 }
-
 // FUNÇÕES DE CADASTRO DE LIVROS E USUÁRIOS
-
 void cadastrarLivro(struct cad_liv *livros, int *qtdLivros) {
     struct cad_liv l;
     printf("Codigo do livro: "); scanf("%d", &l.cod_livro); getchar();
@@ -140,7 +124,7 @@ void cadastrarLivro(struct cad_liv *livros, int *qtdLivros) {
 
     livros[*qtdLivros] = l;
     (*qtdLivros)++;
-    printf("\n-------Livro cadastrado com sucesso!-------\n");
+    printf("\n=-------= Livro cadastrado com sucesso! =-------=\n");
 }
 void cadastrarUsuario(struct cad_Users *usuarios, int *qtdUsuarios) {
     struct cad_Users u;
@@ -153,9 +137,7 @@ void cadastrarUsuario(struct cad_Users *usuarios, int *qtdUsuarios) {
     (*qtdUsuarios)++;
     printf("\n-------Usuario cadastrado com sucesso!-------\n");
 }
-
 // FUNÇÕES PARA PESQUISA
-
 void pesquisarLivros(struct cad_liv *livros, int qtdLivros) {
     int op;
     printf("Pesquisar por: \n1-Codigo  2- Titulo  3-Autor: ");
@@ -194,7 +176,7 @@ void pesquisarLivros(struct cad_liv *livros, int qtdLivros) {
         }
     }
 
-    if(!achou) printf("Nenhum livro encontrado.\n");
+    if(!achou) printf("=-------= Nenhum livro encontrado =-------=.\n");
 }
 void pesquisarUsuarios(struct cad_Users *usuarios, int qtdUsuarios) {
     int op;
@@ -222,23 +204,21 @@ void pesquisarUsuarios(struct cad_Users *usuarios, int qtdUsuarios) {
         }
     }
 
-    if(!achou) printf("\n-------Nenhum usuario encontrado.-------\n");
+    if(!achou) printf("\n=-------= Nenhum usuario encontrado =-------=====\n");
 }
-
 // FUNÇÕES DE EMPRÉSTIMO/DEVOLUÇÃO
-
 void realizarEmprestimo(struct sistemaEmpt *emprestimos, int *qtdEmp, struct cad_Users *usuarios, int qtdUsuarios, struct cad_liv *livros, int qtdLivros) {
     int mat, cod;
     printf("Matricula do usuario: ");
     scanf("%d",&mat);
     int idxU=-1, idxL=-1;
     for(int i=0;i<qtdUsuarios;i++) if(usuarios[i].matricula==mat) idxU=i;
-    if(idxU==-1){ printf("Usuario não encontrado.\n"); return; }
+    if(idxU==-1){ printf("=-------= Usuario nao encontrado =-------=\n"); return; }
 
     printf("Codigo do livro: "); scanf("%d",&cod);
     for(int i=0;i<qtdLivros;i++) if(livros[i].cod_livro==cod) idxL=i;
-    if(idxL==-1){ printf("Livro não encontrado.\n"); return; }
-    if(livros[idxL].exempl_disp<=0){ printf("Não ha exemplares disponiveis.\n"); return; }
+    if(idxL==-1){ printf("Livro nao encontrado.\n"); return; }
+    if(livros[idxL].exempl_disp<=0){ printf("=-------= Nao ha exemplares disponiveis =-------=\n"); return; }
 
     struct sistemaEmpt e;
     e.cod_emprestimo = *qtdEmp + 1;
@@ -263,7 +243,7 @@ void realizarDevolucao(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_l
     printf("Codigo do emprestimo: "); scanf("%d",&codEmp);
     int idx=-1;
     for(int i=0;i<qtdEmp;i++) if(emprestimos[i].cod_emprestimo==codEmp && emprestimos[i].status==true) idx=i;
-    if(idx==-1){ printf("Emprestimo não encontrado ou já devolvido.\n"); return; }
+    if(idx==-1){ printf("=-------= Emprestimo nao encontrado ou ja devolvido =-------=\n"); return; }
 
     strcpy(emprestimos[idx].data_devolucao_real, emprestimos[idx].data_devolucao_prev); // simplificação
     emprestimos[idx].status = false;
@@ -274,7 +254,7 @@ void realizarDevolucao(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_l
             break;
         }
 
-    printf("Devolução realizada com sucesso!\n");
+    printf("=-------= Devolucao realizada com sucesso! =--------=\n");
 }
 void listarEmprestimos(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_Users *usuarios, int qtdUsuarios, struct cad_liv *livros, int qtdLivros, bool ativos) {
     printf("=== Emprestimos %s ===\n", ativos?"Ativos":"Devolvidos");
@@ -283,7 +263,7 @@ void listarEmprestimos(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_U
             int idxU=-1, idxL=-1;
             for(int j=0;j<qtdUsuarios;j++) if(usuarios[j].matricula==emprestimos[i].matricula_usuario) idxU=j;
             for(int j=0;j<qtdLivros;j++) if(livros[j].cod_livro==emprestimos[i].cod_livro) idxL=j;
-            printf("Emp %d | Usuario: %s | Livro: %s | Emprestimo: %s | Devolução prevista: %s | Devolucao real: %s\n",
+            printf("Emp %d | Usuario: %s | Livro: %s | Emprestimo: %s | Devolucao prevista: %s | Devolucao real: %s\n",
                    emprestimos[i].cod_emprestimo,
                    idxU>=0?usuarios[idxU].nome_completo:"Desconhecido",
                    idxL>=0?livros[idxL].titulo:"Desconhecido",
@@ -293,7 +273,50 @@ void listarEmprestimos(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_U
         }
     }
 }
+// FUNÇÃO PARA BACKUP
+void backupArquivo(const char *origem, const char *destino)
+{
+    FILE *fOrig = fopen(origem, "w");
+    if (!fOrig) return; // se não existir, nada a fazer
 
+    FILE *fDest = fopen(destino, "w");
+    if (!fDest) { fclose(fOrig); return; }
+
+    char linha[512];
+    while (fgets(linha, sizeof(linha), fOrig))
+    {
+        fputs(linha, fDest);
+    }
+    fclose(fOrig);
+    fclose(fDest);
+}
+int backup_arquivo(const char *origem, const char *destino) {
+    FILE *arquivo_origem = fopen(origem, "rb");
+    if (!arquivo_origem) {
+        perror("Erro ao abrir arquivo de origem");
+        return 1;
+    }
+
+    FILE *arquivo_destino = fopen(destino, "wb");
+    if (!arquivo_destino) {
+        perror("Erro ao criar arquivo de destino");
+        fclose(arquivo_origem);
+        return 1;
+    }
+
+    char buffer[1024];
+    size_t bytes;
+
+    while ((bytes = fread(buffer, 1, sizeof(buffer), arquivo_origem)) > 0) {
+        fwrite(buffer, 1, bytes, arquivo_destino);
+    }
+
+    fclose(arquivo_origem);
+    fclose(arquivo_destino);
+
+    printf("Backup concluído: %s → %s\n", origem, destino);
+    return 0;
+}
 // MAIN
 
 int main() {
@@ -306,8 +329,9 @@ int main() {
     int qtdEmp = carregarEmprestimos(emprestimos);
 
     int opcao;
-    do {
-        printf("\n\n (>>>>>>> SISTEMA DE BIBLIOTECA <<<<<<<) \n\n");
+    do {printf("\n*******************************************\n");
+        printf("\n > > > > SISTEMA DE BIBLIOTECA < < < < \n");
+        printf("\n*******************************************\n");
         printf("1 - Cadastrar Livro\n");
         printf("2 - Cadastrar Usuario\n");
         printf("3 - Pesquisar Livros\n");
@@ -349,4 +373,3 @@ int main() {
 
     return 0;
 }
-//comentario
