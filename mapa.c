@@ -411,9 +411,9 @@ int main() {
 
             case 0:
                 // FAZ BACKUP AUTOMÁTICO AO SAIR
-                ("livros.txt", "backup_livros.txt");
-                ("usuarios.txt", "backup_usuarios.txt");
-                ("emprestimos.txt", "backup_emprestimos.txt");
+                backupArquivo("livros.txt", "backup_livros.txt");
+                backupArquivo("usuarios.txt", "backup_usuarios.txt");
+                backupArquivo("emprestimos.txt", "backup_emprestimos.txt");
 
                 // SALVA OS DADOS ATUAIS
                 salvarLivros(livros, qtdLivros);
