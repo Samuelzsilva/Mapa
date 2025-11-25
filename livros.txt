@@ -1,2 +1,2 @@
-1|Profetas e reis|Deus|Ata|2000|4|1
-6|Deus ‚ amor|Deus|Ceu|2005|73|1
+1|Profetas e reis|Deus|0|0|2|0
+1|Enzo|AUot|Kusac|2032|95|1

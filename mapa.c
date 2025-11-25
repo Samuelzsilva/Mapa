@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
-
 #define MAX_LIVROS 100
 #define MAX_USERS 100
 #define MAX_EMPRESTIMOS 100
@@ -262,9 +261,13 @@ void realizarDevolucao(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_l
     int i;
     for(i=0; i<qtdEmp; i++)
         if (emprestimos[i].cod_emprestimo == codEmp && emprestimos[i].status) idx = i;
-    if (idx == -1) { printf("Emprestimo não encontrado.\n"); return; }
+    if (idx == -1) { printf("Emprestimo nao encontrado ou ja devolvido.\n"); return; }
 
-    strcpy(emprestimos[idx].data_devolucao_real, emprestimos[idx].data_devolucao_prev);
+    // OBTÉM A DATA ATUAL DO SISTEMA PARA REGISTRAR A DEVOLUÇÃO
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    sprintf(emprestimos[idx].data_devolucao_real,"%02d/%02d/%04d",tm.tm_mday,tm.tm_mon+1,tm.tm_year+1900);
+
     emprestimos[idx].status = false;
     for(i=0; i<qtdLivros; i++)
         if (livros[i].cod_livro == emprestimos[idx].cod_livro) livros[i].exempl_disp++;
@@ -282,7 +285,7 @@ void listarEmprestimos(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_U
             int j;
             for(j=0; j<qtdUsuarios; j++) if (usuarios[j].matricula == emprestimos[i].matricula_usuario) idxU = j;
             for(j=0; j<qtdLivros; j++) if (livros[j].cod_livro == emprestimos[i].cod_livro) idxL = j;
-            printf("Emp %d | Usuário: %s | Livro: %s | Emp: %s | Prev: %s | Real: %s\n",
+            printf("Emp %d | Usuario: %s | Livro: %s | Emp: %s | Prev: %s | Real: %s\n",
                    emprestimos[i].cod_emprestimo,
                    idxU>=0?usuarios[idxU].nome_completo:"Desconhecido",
                    idxL>=0?livros[idxL].titulo:"Desconhecido",
@@ -374,9 +377,9 @@ int main()
     int opcao;
     do
     {
-        printf("\n===========================================\n");
+        printf("\n===========================================\n\n");
         printf("        >>> SISTEMA DE BIBLIOTECA <<<      \n");
-        printf("===========================================\n");
+        printf("\n===========================================\n\n");
         printf("1 - Cadastros\n");
         printf("2 - Pesquisas\n");
         printf("3 - Emprestimos e Devolucoes\n");
@@ -453,17 +456,17 @@ int main()
                 break;
             }
             case 0:
-                // FAZ BACKUP AUTOMÁTICO AO SAIR
-                backupArquivo("livros.txt", "backup_livros.txt");
-                backupArquivo("usuarios.txt", "backup_usuarios.txt");
-                backupArquivo("emprestimos.txt", "backup_emprestimos.txt");
-
                 // SALVA OS DADOS ATUAIS
                 salvarLivros(livros, qtdLivros);
                 salvarUsuarios(usuarios, qtdUsuarios);
                 salvarEmprestimos(emprestimos, qtdEmp);
 
-                printf("\nBackup e dados salvos com sucesso! Encerrando o sistema...\n");
+                // FAZ BACKUP AUTOMÁTICO AO SAIR - AGORA DO ARQUIVO ATUALIZADO
+                backupArquivo("livros.txt", "backup_livros.txt");
+                backupArquivo("usuarios.txt", "backup_usuarios.txt");
+                backupArquivo("emprestimos.txt", "backup_emprestimos.txt");
+
+                printf("\nDados salvos e backup criado com sucesso! Encerrando o sistema...\n");
                 break;
 
             default:

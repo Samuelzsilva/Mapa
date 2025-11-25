@@ -1,2 +1,1 @@
-255646385|Samuel Silva de Paula|Engenharia de Software|68984045959
-12|Soila Silva de Paula|Fisio|68999779188
+1|Samuel Silva de Paula|Engenheiro de Software|68984045959
