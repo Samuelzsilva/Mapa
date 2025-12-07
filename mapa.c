@@ -20,7 +20,8 @@ de exemplares disponíveis para empréstimo e status geral dos livros.*/
     int exempl_disp;
     bool status;
 };
-struct cad_Users // Número de matrícula único do usuário/aluno, nome completo do usuário, curso do usuário e número de telefone para contato.
+struct cad_Users /* Número de matrícula único do usuário/aluno, nome completo do usuário, curso do usuário e número de
+telefone para contato*/
 {
     int matricula;
     char nome_completo[100];
@@ -29,7 +30,8 @@ struct cad_Users // Número de matrícula único do usuário/aluno, nome complet
 };
 struct sistemaEmpt
 {/* Código de identificação do empréstimo: matrícula do usuário que fez o empréstimo, código do livro
-emprestado, data em que o livro foi emprestado, data prevista para devolução, data real em que o livro foi devolvido e status do empréstimo: true se ativo ou false se devolvido.*/
+emprestado, data em que o livro foi emprestado, data prevista para devolução, data real em que o livro foi devolvido e
+status do empréstimo: true se ativo ou false se devolvido.*/
     int cod_emprestimo;
     int matricula_usuario;
     int cod_livro;
@@ -137,9 +139,11 @@ void cadastrarLivro(struct cad_liv *livros, int *qtdLivros)
 {
     struct cad_liv l;
     printf("Codigo do livro: "); scanf("%d", &l.cod_livro); getchar(); // Lê o código do livro.
-    printf("Titulo: "); fgets(l.titulo, 100, stdin); l.titulo[strcspn(l.titulo,"\n")] = 0; // Lê o título.
+    printf("Titulo: "); fgets(l.titulo, 100, stdin); l.titulo[strcspn(l.titulo,"\n")] = 0; /* Lê o
+    título.*/
     printf("Autor: "); fgets(l.autor, 80, stdin); l.autor[strcspn(l.autor,"\n")] = 0; // Lê o autor.
-    printf("Editora: "); fgets(l.editora, 60, stdin); l.editora[strcspn(l.editora,"\n")] = 0; // Lê a editora.
+    printf("Editora: "); fgets(l.editora, 60, stdin); l.editora[strcspn(l.editora,"\n")] = 0; /* Lê
+    a editora*/
     printf("Ano de publicacao: "); scanf("%d", &l.ano_pub); // Lê o ano de publicação.
     printf("Exemplares disponiveis: "); scanf("%d", &l.exempl_disp); // Lê a quantidade de exemplares disponíveis
     l.status = true; // Define o status como ativo.
@@ -153,9 +157,11 @@ void cadastrarUsuario(struct cad_Users *usuarios, int *qtdUsuarios)
 {
     struct cad_Users u;
     printf("Matricula: "); scanf("%d", &u.matricula); getchar(); // Lê a matrícula.
-    printf("Nome completo: "); fgets(u.nome_completo, 100, stdin); u.nome_completo[strcspn(u.nome_completo,"\n")] = 0; // Lê o nome.
+    printf("Nome completo: "); fgets(u.nome_completo, 100, stdin);
+    u.nome_completo[strcspn(u.nome_completo,"\n")] = 0; // Lê o nome.
     printf("Curso: "); fgets(u.curso, 50, stdin); u.curso[strcspn(u.curso,"\n")] = 0; // Lê o curso.
-    printf("Telefone: "); fgets(u.telefone, 15, stdin); u.telefone[strcspn(u.telefone,"\n")] = 0; // Lê o telefone.
+    printf("Telefone: "); fgets(u.telefone, 15, stdin);
+    u.telefone[strcspn(u.telefone,"\n")] = 0; // Lê o telefone.
 
     usuarios[*qtdUsuarios] = u; // Adiciona o novo usuário no final do array.
     (*qtdUsuarios)++; // Incrementa o contador de usuários.
@@ -236,7 +242,7 @@ void pesquisarUsuarios(struct cad_Users *usuarios, int qtdUsuarios)
         char n[100]; printf("Nome: "); fgets(n,100,stdin); n[strcspn(n,"\n")] = 0;
         int i;
         for(i=0; i<qtdUsuarios; i++)
-            if (strstr(usuarios[i].nome_completo,n)) // Usa strstr para buscar a substring do nome (busca parcial).
+            if (strstr(usuarios[i].nome_completo,n))
             {
                 // Imprime os detalhes do usuário encontrado.
                 printf("%d | %s | %s | %s\n", usuarios[i].matricula,
@@ -247,7 +253,8 @@ void pesquisarUsuarios(struct cad_Users *usuarios, int qtdUsuarios)
     if (!achou) printf("Nenhum usuario encontrado.\n"); // Informa se a pesquisa não teve resultados.
 }
 // Registra um novo empréstimo no sistema.
-void realizarEmprestimo(struct sistemaEmpt *emprestimos, int *qtdEmp, struct cad_Users *usuarios, int qtdUsuarios, struct cad_liv *livros, int qtdLivros)
+void realizarEmprestimo(struct sistemaEmpt *emprestimos, int *qtdEmp,
+    struct cad_Users *usuarios, int qtdUsuarios, struct cad_liv *livros, int qtdLivros)
 {
     int mat, cod;
     printf("Matricula do usuario: "); scanf("%d", &mat);
@@ -306,11 +313,12 @@ void realizarDevolucao(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_l
     // Atualiza o status do empréstimo e a disponibilidade do livro.
     emprestimos[idx].status = false; // Empréstimo torna-se inativo (devolvido).
     for(i=0; i<qtdLivros; i++)
-        if (livros[i].cod_livro == emprestimos[idx].cod_livro) livros[i].exempl_disp++; // Aumenta a disponibilidade do livro.
+        if (livros[i].cod_livro == emprestimos[idx].cod_livro) livros[i].exempl_disp++;
     printf("Devolucao registrada com sucesso!\n");
 }
 // Lista empréstimos, podendo filtrar por ativos ou devolvidos.
-void listarEmprestimos(struct sistemaEmpt *emprestimos, int qtdEmp, struct cad_Users *usuarios, int qtdUsuarios, struct cad_liv *livros, int qtdLivros, bool ativos)
+void listarEmprestimos(struct sistemaEmpt *emprestimos, int qtdEmp,
+    struct cad_Users *usuarios, int qtdUsuarios, struct cad_liv *livros, int qtdLivros, bool ativos)
 {
     printf("\n=== Emprestimos %s ===\n", ativos ? "Ativos" : "Devolvidos");
     int i;
@@ -478,7 +486,8 @@ int main()
                     opEmp = menuEmprestimos(); // Exibe o submenu e obtém a opção.
                     switch(opEmp)
                     {
-                        case 1: realizarEmprestimo(emprestimos, &qtdEmp, usuarios, qtdUsuarios, livros, qtdLivros); break;
+                        case 1: realizarEmprestimo(emprestimos, &qtdEmp, usuarios,
+                        qtdUsuarios, livros, qtdLivros); break;
                         case 2: realizarDevolucao(emprestimos, qtdEmp, livros, qtdLivros); break;
                         case 0: break;
                         default: printf("Opcao invalida!\n");
@@ -494,8 +503,10 @@ int main()
                     opList = menuListagens(); // Exibe o submenu e obtém a opção.
                     switch(opList)
                     {
-                        case 1: listarEmprestimos(emprestimos, qtdEmp, usuarios, qtdUsuarios, livros, qtdLivros, true); break; // true para ativos
-                        case 2: listarEmprestimos(emprestimos, qtdEmp, usuarios, qtdUsuarios, livros, qtdLivros, false); break; // false para devolvidos
+                        case 1: listarEmprestimos(emprestimos, qtdEmp, usuarios, qtdUsuarios, livros,
+                            qtdLivros, true); break; // true para ativos
+                        case 2: listarEmprestimos(emprestimos, qtdEmp, usuarios, qtdUsuarios, livros,
+                            qtdLivros, false); break; // false para devolvidos
                         case 0: break;
                         default: printf("Opcao invalida!\n");
                     }
